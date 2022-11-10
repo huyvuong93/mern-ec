@@ -1,0 +1,42 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - ./client:/app
+    ports:
+      - "3000:3000"
+    networks:
+      - mern-stack-net
+    stdin_open: true
+    tty: true
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./server:/app
+    ports:
+      - "3080:3080"
+    networks:
+      - mern-stack-net
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-db:/data/db
+    networks:
+      - mern-stack-net
+
+networks:
+  mern-stack-net:
+    driver: bridge
+
+volumes:
+  mongo-db:
