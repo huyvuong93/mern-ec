@@ -1,11 +1,11 @@
 const { body, validationResult } = require("express-validator");
-const CustomerService = require('../services/CustomerService');
+const UserService = require('../services/UserService');
 
-exports.CustomerValidator = [
+exports.UserValidator = [
   body('email', 'Invalid email.').isEmail(),
   body('email').custom((value) => {
-    return CustomerService.fetchCustomerByEmail(value).then((customer) => {
-      if (customer) {
+    return UserService.fetchUserByEmail(value).then((User) => {
+      if (User) {
         return Promise.reject('Email already in use.');
       }
     });
