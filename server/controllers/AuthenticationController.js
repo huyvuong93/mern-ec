@@ -35,9 +35,9 @@ module.exports = class AuthenticateController {
             res.cookie("access_token", accessToken, {
               maxAge: 60 * 60 * 1000,
               httpOnly: true,
-              secure: true,
+              // secure: true,
             });
-            res.status(200).json({ message: 'Logged in!' });
+            res.status(200).json({ accessToken, user });
           } else {
             req.user = null;
             res.clearCookie("access_token");
@@ -74,8 +74,13 @@ module.exports = class AuthenticateController {
   }
 
   static logout(req, res) {
-    req.user = null;
-    res.clearCookie("access_token");
-    res.status(200).json({ message: 'Logged out!' });
+    try {
+      req.user = null;
+      res.clearCookie("access_token");
+      res.status(200).json({ message: 'Logged out!' });
+    } catch (err) {
+      expressLogger.error(err.message);
+      res.status(400).json({ message: err.message });
+    }
   }
 }

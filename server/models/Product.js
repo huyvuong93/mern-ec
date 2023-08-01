@@ -1,6 +1,42 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const Category = new Schema({
+  name: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  order_no: {
+    type: Number
+  }
+})
+
+const Tag = new Schema({
+  name: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  order_no: {
+    type: Number
+  }
+});
+
+const Brand = new Schema({
+  name: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+})
+
+const ProductImage = new Schema({
+  path: {
+    type: String
+  }
+});
+
 const Product = new mongoose.Schema({
   code: {
     type: String,
@@ -21,20 +57,25 @@ const Product = new mongoose.Schema({
   images : [{
     type: Schema.Types.ObjectId,
     ref: "ProductImage"
-  }]
-});
-
-const ProductImage = new Schema({
-  path: {
-    type: String
-  },
-  product: {
+  }],
+  category: {
     type: Schema.Types.ObjectId,
-    ref: "Product"
+    ref: "Category"
+  },
+  tags: [{
+    type: Schema.Types.ObjectId,
+    ref: "Tag"
+  }],
+  brand: {
+    type: Schema.Types.ObjectId,
+    ref: "Brand"
   }
 });
 
 module.exports = {
   Product: mongoose.model('Product', Product),
   ProductImage: mongoose.model('ProductImage', ProductImage),
+  Category: mongoose.model('Category', Category),
+  Tag: mongoose.model('Tag', Tag),
+  Brand: mongoose.model('Brand', Brand),
 }

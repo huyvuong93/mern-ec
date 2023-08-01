@@ -1,5 +1,6 @@
 require('dotenv').config();
-const https = require('https');
+//const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const mongoose = require("mongoose");
@@ -11,7 +12,11 @@ const session = require('express-session');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', //アクセス許可するオリジン
+  credentials: true, //レスポンスヘッダーにAccess-Control-Allow-Credentials追加
+  optionsSuccessStatus: 200 //レスポンスstatusを200に設定
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -48,10 +53,11 @@ const certificate = fs.readFileSync(`${__dirname}/cert.pem`, 'utf8');
 const credentials = { key: privateKey, cert: certificate, passphrase: "huyvuong"};
 
 // Create an HTTPS service with the Express app and the credentials
-const httpsServer = https.createServer(credentials, app);
+//const httpsServer = https.createServer(credentials, app);
+const httpServer = http.createServer(app);
 
-const httpsPort = process.env.PORT;
+const httpPort = process.env.PORT;
 // Start the HTTPS server
-httpsServer.listen(httpsPort, () => {
-  console.log(`Example app listening at https://localhost:${httpsPort}`);
+httpServer.listen(httpPort, () => {
+  console.log(`Example app listening at https://localhost:${httpPort}`);
 });

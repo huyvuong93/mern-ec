@@ -4,9 +4,22 @@ const fs = require('fs');
 const { expressLogger } = require('../services/LogService')
 
 module.exports = class ProductService {
-  static async fetchAllProducts() {
+  static async fetchAllProducts(conditions) {
+    const query = Product.find().populate('images');
     try {
-      return await Product.find();
+      if (conditions.categoryId) {
+        query.populate({
+          path: 'category',
+          match: {id: conditions.categoryId}
+        })
+      }
+      if (conditions.brandId) {
+        query.populate({
+          path: 'brand',
+          match: {id: conditions.brandId}
+        })
+      }
+      return await query.populate('tags');
     } catch (err) {
       expressLogger.error(err.message);
       console.log(err);
@@ -15,7 +28,7 @@ module.exports = class ProductService {
 
   static async fetchProductById(id) {
     try {
-      return await Product.findById(id);
+      return await Product.findById(id).populate('images').populate('category').populate('brand').populate('tags');
     } catch (err) {
       expressLogger.error(err.message);
       return false;
@@ -77,18 +90,17 @@ module.exports = class ProductService {
 
   static async uploadImages(product, files) {
     const storageDest = path.join(__dirname) +
-      `/../uploads/product/${product._id}`;
+      `/../uploads/products/${product._id}`;
     if (!fs.existsSync(storageDest)) {
       fs.mkdirSync(storageDest, {recursive: true});
     }
     const promises = [];
-    files.forEach((file) => {
+    files.forEach((file, index) => {
       const src = fs.createReadStream(file.path);
-      const dest = fs.createWriteStream(`${storageDest}/${file.filename}`);
+      const dest = fs.createWriteStream(`${storageDest}/${index + 1}.jpeg`);
       src.pipe(dest);
       const productImage = new ProductImage({
-        path: `/uploads/product/${product._id}/${file.filename}`,
-        product: product._id,
+        path: `/products/${product._id}/${index + 1}.jpeg`,
       }).save();
       promises.push(productImage);
     })

@@ -1,12 +1,18 @@
-import { createContext } from "react";
+import {useState, useEffect, createContext} from "react";
 
-const authContext = createContext({
-  authenticated: false,
-  user: null,
-  setAuthenticated: (user) => {
-    this.authenticated = true;
-    this.user = user;
+export const AuthContext = createContext(null);
+
+export const AuthProvider = ({children}) => {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const isAuthenticated = () => {
+    const user = localStorage.getItem('user');
+    setCurrentUser(user);
+    setIsLoading(false);
   }
-});
+  useEffect(() => {
+    isAuthenticated();
+  }, [])
 
-export default authContext;
+  return <AuthContext.Provider value={{currentUser, isLoading}}>{children}</AuthContext.Provider>
+}

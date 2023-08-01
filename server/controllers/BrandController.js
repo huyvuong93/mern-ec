@@ -1,14 +1,14 @@
-const ProductService = require('../../services/ProductService');
-const { expressLogger } = require('../../services/LogService')
+const BrandService = require('../services/BrandService');
+const { expressLogger } = require('../services/LogService')
 
-module.exports = class ProductController {
+module.exports = class BrandController {
   static async index(req, res) {
     try {
-      const products = await ProductService.fetchAllProducts();
-      if (!products) {
+      const brands = await BrandService.fetchAllBrands();
+      if (!brands) {
         res.status(404).json("Not Found");
       } else {
-        res.status(200).json(products)
+        res.status(200).json(brands)
       }
     } catch (err) {
       expressLogger.error(err.message);
@@ -19,11 +19,11 @@ module.exports = class ProductController {
   static async show(req, res) {
     const id = req.params.id;
     try {
-      const product = await ProductService.fetchProductById(id);
-      if (!product) {
+      const brand = await BrandService.fetchBrandById(id);
+      if (!brand) {
         res.status(404).json("Not Found");
       } else {
-        res.status(200).json(product);
+        res.status(200).json(brand);
       }
     } catch (err) {
       expressLogger.error(err.message);
@@ -33,9 +33,9 @@ module.exports = class ProductController {
 
   static async create(req, res) {
     try {
-      const product = await ProductService.createNewProduct(req, res);
-      if (product) {
-        res.status(200).json({message: "Product created successfully."});
+      const brand = await BrandService.create(req, res);
+      if (brand) {
+        res.status(200).json({message: "Brand created successfully."});
       } else {
         res.status(400).json({message: "Err"});
       }
@@ -48,7 +48,7 @@ module.exports = class ProductController {
   static async update(req, res) {
     const id = req.params.id;
     try {
-      ProductService.updateProduct(id, req).then(() => {
+      BrandService.update(id, req).then(() => {
         res.status(200).json({ message: "Successfully Updated." })
       }).catch((err) => {
         expressLogger.error(err.message);
@@ -63,7 +63,7 @@ module.exports = class ProductController {
   static async delete(req, res) {
     const id = req.params.id;
     try {
-      await ProductService.deleteProduct(id);
+      await BrandService.delete(id);
       res.status(200).json({message: "Successfully Deleted."})
     } catch (err) {
       expressLogger.error(err.message);

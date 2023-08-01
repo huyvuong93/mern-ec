@@ -1,5 +1,6 @@
 /node_modules
 /uploads/
-config.env
+/logs
+.env
 cert.pem
 key.pem
